@@ -204,6 +204,36 @@
         border-color: transparent;
         font-weight: 600;
     }
+    .category-row { margin-top: -6px; margin-bottom: -6px; }
+    .category-chip {
+        background: transparent;
+        color: var(--muted);
+        border: none;
+        padding: 6px 4px;
+        cursor: pointer;
+        font-size: 0.9em;
+        font-weight: 600;
+        position: relative;
+        transition: color 0.2s ease;
+    }
+    .category-chip::after {
+        content: "";
+        position: absolute;
+        left: 0; right: 0; bottom: -2px;
+        height: 2px;
+        background: var(--accent);
+        transform: scaleX(0);
+        transition: transform 0.2s ease;
+    }
+    .category-chip:hover { color: var(--text); }
+    .category-chip.active { color: var(--text); }
+    .category-chip.active::after { transform: scaleX(1); }
+    .loading-more {
+        text-align: center;
+        color: var(--muted);
+        padding: 20px;
+        font-size: 0.9em;
+    }
     select#sort {
         background: var(--card);
         color: var(--text);
@@ -465,9 +495,18 @@
     .config-box a { color: var(--accent-2); }
 
     @media (max-width: 640px) {
-        .hero-title { font-size: 1.8em; }
-        header { padding: 14px 16px; }
-        .controls, .grid { padding-left: 16px; padding-right: 16px; }
+        .hero-title { font-size: 1.6em; }
+        .hero { height: 52vh; min-height: 320px; }
+        header { padding: 12px 14px; gap: 12px; }
+        .logo { font-size: 1.25em; }
+        .controls, .grid { padding-left: 14px; padding-right: 14px; }
+        .grid { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 14px; }
+        .section-title { font-size: 1.15em; }
+        .category-row { overflow-x: auto; flex-wrap: nowrap; }
+        .modal-title { font-size: 1.3em; }
+    }
+    @media (max-width: 400px) {
+        .grid { grid-template-columns: repeat(2, 1fr); }
     }
 </style>
 </head>
@@ -488,12 +527,24 @@ let API_KEY = localStorage.getItem(TMDB_KEY_STORAGE) || "";
 let state = {
     genres: [],
     activeGenre: null,
+    activeCategory: "popular", // popular | top_rated | now_playing | upcoming | trending
     sortBy: "popularity.desc",
     searchTerm: "",
     searchDebounce: null,
     movies: [],
     heroMovie: null,
+    page: 1,
+    totalPages: 1,
+    isLoadingMore: false,
 };
+
+const CATEGORIES = [
+    { id: "popular", label: "Populares" },
+    { id: "top_rated", label: "Mais bem avaliados" },
+    { id: "now_playing", label: "Em cartaz" },
+    { id: "upcoming", label: "Em breve" },
+    { id: "trending", label: "Tendências da semana" },
+];
 
 const app = document.getElementById("app");
 
@@ -542,23 +593,26 @@ async function loadGenres() {
     state.genres = data.genres || [];
 }
 
-async function loadMovies() {
+async function loadMovies(page = 1, append = false) {
     let data;
     if (state.searchTerm) {
-        data = await tmdbFetch("/search/movie", { query: state.searchTerm, page: 1 });
+        data = await tmdbFetch("/search/movie", { query: state.searchTerm, page });
     } else if (state.activeGenre) {
         data = await tmdbFetch("/discover/movie", {
             with_genres: state.activeGenre,
             sort_by: state.sortBy,
             "vote_count.gte": 50,
+            page,
         });
+    } else if (state.activeCategory === "trending") {
+        data = await tmdbFetch("/trending/movie/week", { page });
     } else {
-        data = await tmdbFetch("/discover/movie", {
-            sort_by: state.sortBy,
-            "vote_count.gte": 50,
-        });
+        data = await tmdbFetch(`/movie/${state.activeCategory}`, { page });
     }
-    state.movies = (data.results || []).filter(m => m.poster_path);
+    const results = (data.results || []).filter(m => m.poster_path);
+    state.movies = append ? [...state.movies, ...results] : results;
+    state.page = data.page || 1;
+    state.totalPages = data.total_pages || 1;
 }
 
 async function loadHero() {
@@ -587,6 +641,9 @@ function renderShell() {
 
         <div class="controls">
             <div class="section-title" id="section-title">Populares agora</div>
+        </div>
+        <div class="controls category-row" id="category-row"></div>
+        <div class="controls">
             <div class="chip-group" id="genre-chips"></div>
             <select id="sort">
                 <option value="popularity.desc">Mais populares</option>
@@ -597,6 +654,8 @@ function renderShell() {
         </div>
 
         <div class="grid" id="grid"></div>
+        <div id="load-more-sentinel"></div>
+        <div class="loading-more" id="loading-more" style="display:none">Carregando mais filmes...</div>
 
         <div class="modal-overlay" id="modal-overlay">
             <div class="modal" id="modal"></div>
@@ -627,6 +686,55 @@ function renderShell() {
     document.addEventListener("keydown", (e) => {
         if (e.key === "Escape") closeModal();
     });
+}
+
+function renderCategoryRow() {
+    const container = document.getElementById("category-row");
+    container.innerHTML = CATEGORIES.map(c =>
+        `<button class="category-chip ${state.activeCategory === c.id ? "active" : ""}" data-cat="${c.id}">${c.label}</button>`
+    ).join("");
+    container.querySelectorAll(".category-chip").forEach(btn => {
+        btn.addEventListener("click", () => {
+            state.activeCategory = btn.dataset.cat;
+            state.activeGenre = null;
+            state.searchTerm = "";
+            document.getElementById("search-input").value = "";
+            document.getElementById("section-title").textContent =
+                CATEGORIES.find(c => c.id === state.activeCategory).label;
+            container.querySelectorAll(".category-chip").forEach(b => b.classList.remove("active"));
+            btn.classList.add("active");
+            document.querySelectorAll("#genre-chips .chip").forEach(c => c.classList.remove("active"));
+            document.querySelector('#genre-chips .chip[data-genre=""]')?.classList.add("active");
+            refreshMovies();
+        });
+    });
+}
+
+let scrollObserver = null;
+function setupInfiniteScroll() {
+    const sentinel = document.getElementById("load-more-sentinel");
+    if (scrollObserver) scrollObserver.disconnect();
+    scrollObserver = new IntersectionObserver(async (entries) => {
+        if (entries[0].isIntersecting) {
+            await loadMoreMovies();
+        }
+    }, { rootMargin: "400px" });
+    scrollObserver.observe(sentinel);
+}
+
+async function loadMoreMovies() {
+    if (state.isLoadingMore || state.page >= state.totalPages) return;
+    state.isLoadingMore = true;
+    document.getElementById("loading-more").style.display = "block";
+    try {
+        await loadMovies(state.page + 1, true);
+        renderMovies(true);
+    } catch (err) {
+        console.error("Erro ao carregar mais filmes:", err);
+    } finally {
+        state.isLoadingMore = false;
+        document.getElementById("loading-more").style.display = "none";
+    }
 }
 
 function renderGenreChips() {
@@ -682,28 +790,47 @@ function renderSkeletons() {
     `).join("");
 }
 
-function renderMovies() {
+function movieCardHtml(m, idx) {
+    const year = (m.release_date || "").slice(0, 4) || "—";
+    return `
+    <div class="movie-card" data-id="${m.id}" style="animation-delay:${(idx % 20) * 0.03}s">
+        <div class="poster-wrap">
+            <img src="${IMG_BASE}w500${m.poster_path}" alt="${m.title}" loading="lazy">
+            <span class="rating-pill">⭐ ${m.vote_average.toFixed(1)}</span>
+        </div>
+        <div class="movie-info">
+            <div class="movie-title">${m.title}</div>
+            <div class="movie-year">${year}</div>
+        </div>
+    </div>`;
+}
+
+function renderMovies(append = false) {
     const grid = document.getElementById("grid");
-    if (!state.movies.length) {
-        grid.innerHTML = `<p class="empty-msg">Nenhum filme encontrado.</p>`;
+
+    if (!append) {
+        if (!state.movies.length) {
+            grid.innerHTML = `<p class="empty-msg">Nenhum filme encontrado.</p>`;
+            return;
+        }
+        grid.innerHTML = state.movies.map((m, idx) => movieCardHtml(m, idx)).join("");
+        attachCardListeners(grid);
         return;
     }
-    grid.innerHTML = state.movies.map((m, idx) => {
-        const year = (m.release_date || "").slice(0, 4) || "—";
-        return `
-        <div class="movie-card" data-id="${m.id}" style="animation-delay:${idx * 0.03}s">
-            <div class="poster-wrap">
-                <img src="${IMG_BASE}w500${m.poster_path}" alt="${m.title}" loading="lazy">
-                <span class="rating-pill">⭐ ${m.vote_average.toFixed(1)}</span>
-            </div>
-            <div class="movie-info">
-                <div class="movie-title">${m.title}</div>
-                <div class="movie-year">${year}</div>
-            </div>
-        </div>`;
-    }).join("");
 
+    // Acrescenta somente os filmes novos (últimos carregados), sem re-renderizar tudo
+    const alreadyRendered = grid.querySelectorAll(".movie-card").length;
+    const newOnes = state.movies.slice(alreadyRendered);
+    const wrapper = document.createElement("div");
+    wrapper.innerHTML = newOnes.map((m, idx) => movieCardHtml(m, idx)).join("");
+    Array.from(wrapper.children).forEach(child => grid.appendChild(child));
+    attachCardListeners(grid);
+}
+
+function attachCardListeners(grid) {
     grid.querySelectorAll(".movie-card").forEach(card => {
+        if (card.dataset.bound) return;
+        card.dataset.bound = "1";
         card.addEventListener("click", () => openModal(card.dataset.id));
     });
 }
@@ -766,8 +893,9 @@ function closeModal() {
 async function refreshMovies() {
     renderSkeletons();
     try {
-        await loadMovies();
-        renderMovies();
+        await loadMovies(1, false);
+        renderMovies(false);
+        setupInfiniteScroll();
     } catch (err) {
         if (err.status === 401) {
             localStorage.removeItem(TMDB_KEY_STORAGE);
@@ -776,6 +904,24 @@ async function refreshMovies() {
         }
         renderError(err.message);
     }
+}
+
+// Atualiza o catálogo sozinho a cada 10 minutos, sem precisar recarregar a página,
+// e também sempre que a aba volta a ficar visível (ex: usuário volta de outra aba).
+const AUTO_REFRESH_MS = 10 * 60 * 1000;
+let autoRefreshTimer = null;
+
+function scheduleAutoRefresh() {
+    if (autoRefreshTimer) clearInterval(autoRefreshTimer);
+    autoRefreshTimer = setInterval(() => {
+        if (!state.searchTerm) refreshMovies();
+    }, AUTO_REFRESH_MS);
+
+    document.addEventListener("visibilitychange", () => {
+        if (document.visibilityState === "visible" && !state.searchTerm) {
+            refreshMovies();
+        }
+    });
 }
 
 async function init() {
@@ -787,8 +933,10 @@ async function init() {
     try {
         await Promise.all([loadGenres(), loadHero()]);
         renderHero();
+        renderCategoryRow();
         renderGenreChips();
         await refreshMovies();
+        scheduleAutoRefresh();
     } catch (err) {
         if (err.status === 401) {
             localStorage.removeItem(TMDB_KEY_STORAGE);
