@@ -25,8 +25,6 @@
         color: var(--text);
         min-height: 100vh;
     }
-
-    /* ---------- HEADER ---------- */
     header {
         position: sticky;
         top: 0;
@@ -52,11 +50,7 @@
         color: transparent;
         white-space: nowrap;
     }
-    .search-bar {
-        flex: 1;
-        max-width: 420px;
-        position: relative;
-    }
+    .search-bar { flex: 1; max-width: 420px; position: relative; }
     .search-bar input {
         width: 100%;
         background: var(--card);
@@ -71,16 +65,7 @@
     }
     .search-bar input:focus { border-color: var(--accent); }
     .search-bar input::placeholder { color: var(--muted); }
-    .search-icon {
-        position: absolute;
-        left: 15px;
-        top: 50%;
-        transform: translateY(-50%);
-        color: var(--muted);
-        font-size: 0.9em;
-    }
-
-    /* ---------- HERO ---------- */
+    .search-icon { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: var(--muted); font-size: 0.9em; }
     .hero {
         position: relative;
         height: 62vh;
@@ -98,12 +83,7 @@
         background: linear-gradient(180deg, rgba(10,10,18,0.1) 0%, rgba(10,10,18,0.5) 55%, var(--bg) 100%),
                     linear-gradient(90deg, rgba(10,10,18,0.85) 0%, transparent 55%);
     }
-    .hero-content {
-        position: relative;
-        padding: 40px 40px 50px;
-        max-width: 640px;
-        animation: fadeIn 0.6s ease;
-    }
+    .hero-content { position: relative; padding: 40px 40px 50px; max-width: 640px; animation: fadeIn 0.6s ease; }
     .hero-tag {
         display: inline-block;
         background: var(--accent);
@@ -124,22 +104,8 @@
         margin-bottom: 14px;
         text-shadow: 0 4px 20px rgba(0,0,0,0.6);
     }
-    .hero-meta {
-        display: flex;
-        gap: 16px;
-        align-items: center;
-        color: var(--muted);
-        font-size: 0.9em;
-        margin-bottom: 16px;
-        flex-wrap: wrap;
-    }
-    .hero-rating {
-        color: var(--gold);
-        font-weight: 700;
-        display: flex;
-        align-items: center;
-        gap: 4px;
-    }
+    .hero-meta { display: flex; gap: 16px; align-items: center; color: var(--muted); font-size: 0.9em; margin-bottom: 16px; flex-wrap: wrap; }
+    .hero-rating { color: var(--gold); font-weight: 700; display: flex; align-items: center; gap: 4px; }
     .hero-overview {
         color: #d8d8e2;
         font-size: 0.98em;
@@ -163,8 +129,6 @@
         transition: background 0.2s ease, transform 0.15s ease;
     }
     .hero-btn:hover { background: #c40812; transform: translateY(-2px); }
-
-    /* ---------- CONTROLS ---------- */
     .controls {
         max-width: 1400px;
         margin: 36px auto 20px;
@@ -174,18 +138,8 @@
         gap: 12px;
         align-items: center;
     }
-    .section-title {
-        font-family: 'Poppins', sans-serif;
-        font-size: 1.4em;
-        font-weight: 700;
-        flex: 1;
-        min-width: 200px;
-    }
-    .chip-group {
-        display: flex;
-        gap: 8px;
-        flex-wrap: wrap;
-    }
+    .section-title { font-family: 'Poppins', sans-serif; font-size: 1.4em; font-weight: 700; flex: 1; min-width: 200px; }
+    .chip-group { display: flex; gap: 8px; flex-wrap: wrap; }
     .chip {
         background: var(--card);
         color: var(--text);
@@ -199,11 +153,7 @@
         white-space: nowrap;
     }
     .chip:hover { border-color: var(--accent); }
-    .chip.active {
-        background: linear-gradient(90deg, var(--accent), var(--accent-2));
-        border-color: transparent;
-        font-weight: 600;
-    }
+    .chip.active { background: linear-gradient(90deg, var(--accent), var(--accent-2)); border-color: transparent; font-weight: 600; }
     .category-row { margin-top: -6px; margin-bottom: -6px; }
     .category-chip {
         background: transparent;
@@ -228,12 +178,7 @@
     .category-chip:hover { color: var(--text); }
     .category-chip.active { color: var(--text); }
     .category-chip.active::after { transform: scaleX(1); }
-    .loading-more {
-        text-align: center;
-        color: var(--muted);
-        padding: 20px;
-        font-size: 0.9em;
-    }
+    .loading-more { text-align: center; color: var(--muted); padding: 20px; font-size: 0.9em; }
     select#sort {
         background: var(--card);
         color: var(--text);
@@ -245,8 +190,6 @@
         cursor: pointer;
         outline: none;
     }
-
-    /* ---------- GRID ---------- */
     .grid {
         max-width: 1400px;
         margin: 0 auto;
@@ -265,23 +208,9 @@
         transition: transform 0.25s ease, box-shadow 0.25s ease;
         border: 1px solid var(--border);
     }
-    .movie-card:hover {
-        transform: translateY(-8px) scale(1.02);
-        box-shadow: 0 16px 32px rgba(229,9,20,0.25);
-    }
-    .poster-wrap {
-        position: relative;
-        aspect-ratio: 2/3;
-        background: var(--bg-alt);
-        overflow: hidden;
-    }
-    .poster-wrap img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        display: block;
-        transition: transform 0.3s ease;
-    }
+    .movie-card:hover { transform: translateY(-8px) scale(1.02); box-shadow: 0 16px 32px rgba(229,9,20,0.25); }
+    .poster-wrap { position: relative; aspect-ratio: 2/3; background: var(--bg-alt); overflow: hidden; }
+    .poster-wrap img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.3s ease; }
     .movie-card:hover .poster-wrap img { transform: scale(1.06); }
     .rating-pill {
         position: absolute;
@@ -298,25 +227,6 @@
         align-items: center;
         gap: 3px;
     }
-    .fav-btn {
-        position: absolute;
-        top: 10px;
-        left: 10px;
-        background: rgba(10,10,18,0.85);
-        backdrop-filter: blur(4px);
-        border: none;
-        width: 30px;
-        height: 30px;
-        border-radius: 50%;
-        cursor: pointer;
-        font-size: 0.95em;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: transform 0.15s ease;
-    }
-    .fav-btn:hover { transform: scale(1.15); }
-    .fav-btn.active { background: rgba(229,9,20,0.25); }
     .movie-info { padding: 12px 14px 14px; }
     .movie-title {
         font-family: 'Poppins', sans-serif;
@@ -331,49 +241,18 @@
         min-height: 2.4em;
     }
     .movie-year { color: var(--muted); font-size: 0.8em; }
-
-    .empty-msg, .error-msg {
-        text-align: center;
-        color: var(--muted);
-        padding: 60px 20px;
-        grid-column: 1/-1;
-    }
+    .empty-msg, .error-msg { text-align: center; color: var(--muted); padding: 60px 20px; grid-column: 1/-1; }
     .error-msg { color: var(--accent-2); }
-    .error-msg code {
-        display: block;
-        background: var(--card);
-        padding: 10px 14px;
-        border-radius: 8px;
-        margin-top: 14px;
-        font-size: 0.85em;
-        color: var(--text);
-    }
-
-    /* ---------- SKELETON LOADING ---------- */
-    .skeleton {
-        background: var(--card);
-        border-radius: 14px;
-        overflow: hidden;
-        border: 1px solid var(--border);
-    }
+    .error-msg code { display: block; background: var(--card); padding: 10px 14px; border-radius: 8px; margin-top: 14px; font-size: 0.85em; color: var(--text); }
+    .skeleton { background: var(--card); border-radius: 14px; overflow: hidden; border: 1px solid var(--border); }
     .skeleton .poster-wrap {
         background: linear-gradient(90deg, var(--card) 25%, #23233a 50%, var(--card) 75%);
         background-size: 200% 100%;
         animation: shimmer 1.4s infinite;
     }
-    .skeleton .line {
-        height: 10px;
-        border-radius: 6px;
-        background: var(--bg-alt);
-        margin: 12px 14px;
-    }
+    .skeleton .line { height: 10px; border-radius: 6px; background: var(--bg-alt); margin: 12px 14px; }
     .skeleton .line.short { width: 60%; }
-    @keyframes shimmer {
-        0% { background-position: 200% 0; }
-        100% { background-position: -200% 0; }
-    }
-
-    /* ---------- MODAL ---------- */
+    @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
     .modal-overlay {
         position: fixed;
         inset: 0;
@@ -414,90 +293,22 @@
         transition: background 0.2s ease;
     }
     .modal-close:hover { background: var(--accent); }
-    .modal-backdrop {
-        width: 100%;
-        aspect-ratio: 16/8;
-        object-fit: cover;
-        display: block;
-    }
+    .modal-backdrop { width: 100%; aspect-ratio: 16/8; object-fit: cover; display: block; }
     .modal-body { padding: 26px 30px 34px; }
-    .modal-title-row {
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-start;
-        gap: 16px;
-        flex-wrap: wrap;
-    }
-    .modal-fav-btn {
-        background: var(--card);
-        border: 1px solid var(--border);
-        color: var(--text);
-        padding: 8px 16px;
-        border-radius: 999px;
-        cursor: pointer;
-        font-size: 0.85em;
-        font-weight: 600;
-        white-space: nowrap;
-        transition: all 0.2s ease;
-    }
-    .modal-fav-btn.active { background: rgba(229,9,20,0.2); border-color: var(--accent); }
-    .modal-title {
-        font-family: 'Poppins', sans-serif;
-        font-size: 1.7em;
-        font-weight: 700;
-        margin-bottom: 10px;
-    }
-    .modal-meta {
-        display: flex;
-        gap: 14px;
-        flex-wrap: wrap;
-        color: var(--muted);
-        font-size: 0.9em;
-        margin-bottom: 18px;
-        align-items: center;
-    }
+    .modal-title { font-family: 'Poppins', sans-serif; font-size: 1.7em; font-weight: 700; margin-bottom: 10px; }
+    .modal-meta { display: flex; gap: 14px; flex-wrap: wrap; color: var(--muted); font-size: 0.9em; margin-bottom: 18px; align-items: center; }
     .modal-meta .modal-rating { color: var(--gold); font-weight: 700; }
-    .genre-tag {
-        background: var(--card);
-        border: 1px solid var(--border);
-        padding: 4px 12px;
-        border-radius: 999px;
-        font-size: 0.85em;
-        color: var(--text);
-    }
+    .genre-tag { background: var(--card); border: 1px solid var(--border); padding: 4px 12px; border-radius: 999px; font-size: 0.85em; color: var(--text); }
     .modal-overview { line-height: 1.7; color: #d8d8e2; margin-bottom: 20px; }
     .modal-extra { display: flex; gap: 30px; flex-wrap: wrap; color: var(--muted); font-size: 0.88em; }
     .modal-extra strong { color: var(--text); display: block; margin-bottom: 3px; font-size: 0.95em; }
-
-    /* ---------- ANIMATIONS ---------- */
     @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     @keyframes fadeInUp { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
     @keyframes slideUp { from { opacity: 0; transform: translateY(30px) scale(0.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
-
-    footer {
-        text-align: center;
-        color: var(--muted);
-        font-size: 0.8em;
-        padding: 30px 20px 40px;
-    }
+    footer { text-align: center; color: var(--muted); font-size: 0.8em; padding: 30px 20px 40px; }
     footer a { color: var(--muted); }
-
-    /* ---------- CONFIG SCREEN ---------- */
-    .config-screen {
-        min-height: 100vh;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 30px;
-    }
-    .config-box {
-        background: var(--card);
-        border: 1px solid var(--border);
-        border-radius: 18px;
-        padding: 40px;
-        max-width: 480px;
-        text-align: center;
-    }
+    .config-screen { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 30px; }
+    .config-box { background: var(--card); border: 1px solid var(--border); border-radius: 18px; padding: 40px; max-width: 480px; text-align: center; }
     .config-box h1 {
         font-family: 'Poppins', sans-serif;
         font-size: 1.6em;
@@ -532,7 +343,6 @@
         font-size: 0.95em;
     }
     .config-box a { color: var(--accent-2); }
-
     @media (max-width: 640px) {
         .hero-title { font-size: 1.6em; }
         .hero { height: 52vh; min-height: 320px; }
@@ -559,17 +369,14 @@
    Tudo client-side: HTML gerado via JS, sem backend.
    ========================================================= */
 
-const BACKEND_URL = localStorage.getItem("cinehub_backend_url") || "http://localhost:3001";
+const TMDB_KEY_STORAGE = "cinehub_tmdb_key";
 const IMG_BASE = "https://image.tmdb.org/t/p/";
-
-// Cada visitante tem um ID anônimo salvo no navegador, usado só para
-// guardar favoritos/watchlist no backend (sem precisar de login).
-let USER_ID = localStorage.getItem("cinehub_user_id");
+let API_KEY = localStorage.getItem(TMDB_KEY_STORAGE) || "";
 
 let state = {
     genres: [],
     activeGenre: null,
-    activeCategory: "popular", // popular | top_rated | now_playing | upcoming | trending | favorites
+    activeCategory: "popular",
     sortBy: "popularity.desc",
     searchTerm: "",
     searchDebounce: null,
@@ -578,7 +385,6 @@ let state = {
     page: 1,
     totalPages: 1,
     isLoadingMore: false,
-    favorites: new Set(),
 };
 
 const CATEGORIES = [
@@ -587,116 +393,68 @@ const CATEGORIES = [
     { id: "now_playing", label: "Em cartaz" },
     { id: "upcoming", label: "Em breve" },
     { id: "trending", label: "Tendências da semana" },
-    { id: "favorites", label: "❤️ Favoritos" },
 ];
 
 const app = document.getElementById("app");
 
-/* ---------- TELA DE CONFIGURAÇÃO (URL do backend) ---------- */
 function renderConfigScreen(errorMsg) {
     app.innerHTML = `
         <div class="config-screen">
             <div class="config-box">
                 <h1>🎬 CineHub</h1>
-                <p>Este site usa um backend próprio (Node.js/Express) que faz proxy
-                da API da TMDB. Informe a URL onde o backend está rodando
-                (ex: <code style="color:var(--text)">http://localhost:3001</code>).</p>
+                <p>Para exibir os filmes, este site usa a API gratuita do
+                <a href="https://www.themoviedb.org/" target="_blank">TMDB</a>.
+                Crie uma conta gratuita, gere uma "API Key (v3 auth)" em
+                Configurações → API, e cole ela abaixo.</p>
                 ${errorMsg ? `<p style="color:#ff6b6b">${errorMsg}</p>` : ""}
-                <input type="text" id="backend-url-input" placeholder="URL do backend" value="${BACKEND_URL}">
+                <input type="text" id="api-key-input" placeholder="Cole sua TMDB API Key aqui">
                 <button id="save-key-btn">Salvar e continuar</button>
             </div>
         </div>
     `;
     document.getElementById("save-key-btn").addEventListener("click", () => {
-        const val = document.getElementById("backend-url-input").value.trim().replace(/\/$/, "");
+        const val = document.getElementById("api-key-input").value.trim();
         if (!val) return;
-        localStorage.setItem("cinehub_backend_url", val);
-        location.reload();
+        API_KEY = val;
+        localStorage.setItem(TMDB_KEY_STORAGE, val);
+        init();
     });
 }
 
-/* ---------- CHAMADAS AO BACKEND ---------- */
-async function apiGet(path, params = {}) {
-    const url = new URL(BACKEND_URL + path);
-    Object.entries(params).forEach(([k, v]) => { if (v !== undefined && v !== null) url.searchParams.set(k, v); });
+async function tmdbFetch(path, params = {}) {
+    const url = new URL(`https://api.themoviedb.org/3${path}`);
+    url.searchParams.set("api_key", API_KEY);
+    url.searchParams.set("language", "pt-BR");
+    Object.entries(params).forEach(([k, v]) => url.searchParams.set(k, v));
     const res = await fetch(url);
     if (!res.ok) {
-        const err = new Error(`Backend respondeu ${res.status}`);
+        const err = new Error(`TMDB retornou ${res.status}`);
         err.status = res.status;
         throw err;
     }
     return res.json();
 }
 
-async function apiMutate(method, path) {
-    const res = await fetch(BACKEND_URL + path, {
-        method,
-        headers: { "x-user-id": USER_ID },
-    });
-    if (!res.ok) throw new Error(`Backend respondeu ${res.status}`);
-    return res.json();
-}
-
-async function ensureUserId() {
-    if (USER_ID) return;
-    const data = await apiGet("/api/user").catch(() => null);
-    // /api/user é POST, então chama via fetch direto
-    const res = await fetch(BACKEND_URL + "/api/user", { method: "POST" });
-    const json = await res.json();
-    USER_ID = json.userId;
-    localStorage.setItem("cinehub_user_id", USER_ID);
-}
-
 async function loadGenres() {
-    const data = await apiGet("/api/genres");
+    const data = await tmdbFetch("/genre/movie/list");
     state.genres = data.genres || [];
-}
-
-async function loadFavoritesIds() {
-    try {
-        const res = await fetch(BACKEND_URL + "/api/favorites", { headers: { "x-user-id": USER_ID } });
-        const data = await res.json();
-        state.favorites = new Set((data.favorites || []).map(Number));
-    } catch (err) {
-        state.favorites = new Set();
-    }
-}
-
-async function toggleFavorite(movieId) {
-    movieId = Number(movieId);
-    const isFav = state.favorites.has(movieId);
-    try {
-        if (isFav) {
-            await apiMutate("DELETE", `/api/favorites/${movieId}`);
-            state.favorites.delete(movieId);
-        } else {
-            await apiMutate("POST", `/api/favorites/${movieId}`);
-            state.favorites.add(movieId);
-        }
-    } catch (err) {
-        console.error("Erro ao atualizar favorito:", err);
-    }
 }
 
 async function loadMovies(page = 1, append = false) {
     let data;
-    if (state.activeCategory === "favorites") {
-        // Busca os detalhes de cada filme favoritado (a lista de IDs vem do backend)
-        const ids = Array.from(state.favorites);
-        const results = await Promise.all(ids.map(id => apiGet(`/api/movie/${id}`).catch(() => null)));
-        state.movies = results.filter(Boolean).filter(m => m.poster_path);
-        state.page = 1;
-        state.totalPages = 1;
-        return;
-    }
     if (state.searchTerm) {
-        data = await apiGet("/api/search", { query: state.searchTerm, page });
+        data = await tmdbFetch("/search/movie", { query: state.searchTerm, page });
     } else if (state.activeGenre) {
-        data = await apiGet("/api/discover", { genre: state.activeGenre, sortBy: state.sortBy, page });
+        data = await tmdbFetch("/discover/movie", {
+            with_genres: state.activeGenre,
+            sort_by: state.sortBy,
+            "vote_count.gte": 50,
+            page,
+        });
     } else if (state.activeCategory === "trending") {
-        data = await apiGet("/api/trending-week", { page });
+        data = await tmdbFetch("/trending/movie/week", { page });
     } else {
-        data = await apiGet(`/api/category/${state.activeCategory}`, { page });
+        data = await tmdbFetch(`/movie/${state.activeCategory}`, { page });
     }
     const results = (data.results || []).filter(m => m.poster_path);
     state.movies = append ? [...state.movies, ...results] : results;
@@ -705,15 +463,9 @@ async function loadMovies(page = 1, append = false) {
 }
 
 async function loadHero() {
-    const data = await apiGet("/api/trending");
+    const data = await tmdbFetch("/trending/movie/day");
     const candidates = (data.results || []).filter(m => m.backdrop_path);
     state.heroMovie = candidates[Math.floor(Math.random() * Math.min(5, candidates.length))] || candidates[0];
-}
-
-/* ---------- RENDER ---------- */
-function genreName(id) {
-    const g = state.genres.find(g => g.id === id);
-    return g ? g.name : "";
 }
 
 function renderShell() {
@@ -812,7 +564,6 @@ function setupInfiniteScroll() {
 }
 
 async function loadMoreMovies() {
-    if (state.activeCategory === "favorites") return;
     if (state.isLoadingMore || state.page >= state.totalPages) return;
     state.isLoadingMore = true;
     document.getElementById("loading-more").style.display = "block";
@@ -882,13 +633,11 @@ function renderSkeletons() {
 
 function movieCardHtml(m, idx) {
     const year = (m.release_date || "").slice(0, 4) || "—";
-    const isFav = state.favorites.has(Number(m.id));
     return `
     <div class="movie-card" data-id="${m.id}" style="animation-delay:${(idx % 20) * 0.03}s">
         <div class="poster-wrap">
             <img src="${IMG_BASE}w500${m.poster_path}" alt="${m.title}" loading="lazy">
             <span class="rating-pill">⭐ ${m.vote_average.toFixed(1)}</span>
-            <button class="fav-btn ${isFav ? "active" : ""}" data-fav-id="${m.id}" title="Favoritar">${isFav ? "❤️" : "🤍"}</button>
         </div>
         <div class="movie-info">
             <div class="movie-title">${m.title}</div>
@@ -910,7 +659,6 @@ function renderMovies(append = false) {
         return;
     }
 
-    // Acrescenta somente os filmes novos (últimos carregados), sem re-renderizar tudo
     const alreadyRendered = grid.querySelectorAll(".movie-card").length;
     const newOnes = state.movies.slice(alreadyRendered);
     const wrapper = document.createElement("div");
@@ -923,25 +671,7 @@ function attachCardListeners(grid) {
     grid.querySelectorAll(".movie-card").forEach(card => {
         if (card.dataset.bound) return;
         card.dataset.bound = "1";
-        card.addEventListener("click", (e) => {
-            if (e.target.closest(".fav-btn")) return;
-            openModal(card.dataset.id);
-        });
-    });
-    grid.querySelectorAll(".fav-btn").forEach(btn => {
-        if (btn.dataset.bound) return;
-        btn.dataset.bound = "1";
-        btn.addEventListener("click", async (e) => {
-            e.stopPropagation();
-            const id = btn.dataset.favId;
-            await toggleFavorite(id);
-            const nowFav = state.favorites.has(Number(id));
-            btn.textContent = nowFav ? "❤️" : "🤍";
-            btn.classList.toggle("active", nowFav);
-            if (state.activeCategory === "favorites" && !nowFav) {
-                btn.closest(".movie-card").remove();
-            }
-        });
+        card.addEventListener("click", () => openModal(card.dataset.id));
     });
 }
 
@@ -954,7 +684,6 @@ function renderError(message) {
     `;
 }
 
-/* ---------- MODAL DE DETALHES ---------- */
 async function openModal(id) {
     const overlay = document.getElementById("modal-overlay");
     const modal = document.getElementById("modal");
@@ -962,19 +691,15 @@ async function openModal(id) {
     modal.innerHTML = `<div style="padding:60px;text-align:center;color:var(--muted)">Carregando...</div>`;
 
     try {
-        const m = await apiGet(`/api/movie/${id}`);
+        const m = await tmdbFetch(`/movie/${id}`);
         const year = (m.release_date || "").slice(0, 4) || "—";
         const hours = Math.floor((m.runtime || 0) / 60);
         const mins = (m.runtime || 0) % 60;
-        const isFav = state.favorites.has(Number(m.id));
         modal.innerHTML = `
             <button class="modal-close" id="modal-close-btn">✕</button>
             ${m.backdrop_path ? `<img class="modal-backdrop" src="${IMG_BASE}w780${m.backdrop_path}" alt="${m.title}">` : ""}
             <div class="modal-body">
-                <div class="modal-title-row">
-                    <div class="modal-title">${m.title}</div>
-                    <button class="modal-fav-btn ${isFav ? "active" : ""}" id="modal-fav-btn">${isFav ? "❤️ Favoritado" : "🤍 Favoritar"}</button>
-                </div>
+                <div class="modal-title">${m.title}</div>
                 <div class="modal-meta">
                     <span class="modal-rating">⭐ ${m.vote_average.toFixed(1)}</span>
                     <span>${year}</span>
@@ -990,18 +715,6 @@ async function openModal(id) {
             </div>
         `;
         document.getElementById("modal-close-btn").addEventListener("click", closeModal);
-        document.getElementById("modal-fav-btn").addEventListener("click", async (e) => {
-            await toggleFavorite(m.id);
-            const nowFav = state.favorites.has(Number(m.id));
-            e.target.textContent = nowFav ? "❤️ Favoritado" : "🤍 Favoritar";
-            e.target.classList.toggle("active", nowFav);
-            // Mantém os cards da grade em sincronia com o favorito alterado no modal
-            const gridBtn = document.querySelector(`.fav-btn[data-fav-id="${m.id}"]`);
-            if (gridBtn) {
-                gridBtn.textContent = nowFav ? "❤️" : "🤍";
-                gridBtn.classList.toggle("active", nowFav);
-            }
-        });
     } catch (err) {
         modal.innerHTML = `
             <button class="modal-close" id="modal-close-btn">✕</button>
@@ -1015,7 +728,6 @@ function closeModal() {
     document.getElementById("modal-overlay").classList.remove("open");
 }
 
-/* ---------- FLUXO PRINCIPAL ---------- */
 async function refreshMovies() {
     renderSkeletons();
     try {
@@ -1023,12 +735,15 @@ async function refreshMovies() {
         renderMovies(false);
         setupInfiniteScroll();
     } catch (err) {
+        if (err.status === 401) {
+            localStorage.removeItem(TMDB_KEY_STORAGE);
+            renderConfigScreen("Chave inválida. Tente novamente.");
+            return;
+        }
         renderError(err.message);
     }
 }
 
-// Atualiza o catálogo sozinho a cada 10 minutos, sem precisar recarregar a página,
-// e também sempre que a aba volta a ficar visível (ex: usuário volta de outra aba).
 const AUTO_REFRESH_MS = 10 * 60 * 1000;
 let autoRefreshTimer = null;
 
@@ -1046,18 +761,22 @@ function scheduleAutoRefresh() {
 }
 
 async function init() {
+    if (!API_KEY) {
+        renderConfigScreen();
+        return;
+    }
     renderShell();
     try {
-        await ensureUserId();
-        await Promise.all([loadGenres(), loadHero(), loadFavoritesIds()]);
+        await Promise.all([loadGenres(), loadHero()]);
         renderHero();
         renderCategoryRow();
         renderGenreChips();
         await refreshMovies();
         scheduleAutoRefresh();
     } catch (err) {
-        if (err.message && err.message.includes("Failed to fetch")) {
-            renderConfigScreen("Não foi possível conectar ao backend. Confira se ele está rodando e se a URL está correta.");
+        if (err.status === 401) {
+            localStorage.removeItem(TMDB_KEY_STORAGE);
+            renderConfigScreen("Chave inválida. Tente novamente.");
             return;
         }
         renderError(err.message);
