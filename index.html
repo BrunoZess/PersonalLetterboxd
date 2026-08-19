@@ -18,12 +18,24 @@
         --muted: #9494a8;
         --border: rgba(255,255,255,0.07);
     }
+    body.light {
+        --bg: #f4f4f8;
+        --bg-alt: #e9e9f2;
+        --card: #ffffff;
+        --accent: #e50914;
+        --accent-2: #ff6b6b;
+        --gold: #b8860b;
+        --text: #17171f;
+        --muted: #6b6b7d;
+        --border: rgba(0,0,0,0.08);
+    }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
         font-family: 'Inter', sans-serif;
         background: var(--bg);
         color: var(--text);
         min-height: 100vh;
+        transition: background 0.25s ease, color 0.25s ease;
     }
     header {
         position: sticky;
@@ -387,6 +399,148 @@
         font-size: 0.95em;
     }
     .config-box a { color: var(--accent-2); }
+
+    /* ---------- NOVOS RECURSOS ---------- */
+    .theme-btn {
+        background: var(--card);
+        border: 1px solid var(--border);
+        color: var(--text);
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        cursor: pointer;
+        font-size: 1.1em;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: transform 0.2s ease;
+        flex-shrink: 0;
+    }
+    .theme-btn:hover { transform: rotate(20deg) scale(1.1); }
+
+    .surprise-btn {
+        background: var(--card);
+        color: var(--text);
+        border: 1px solid var(--border);
+        padding: 8px 16px;
+        border-radius: 999px;
+        cursor: pointer;
+        font-size: 0.85em;
+        font-weight: 600;
+        white-space: nowrap;
+        transition: all 0.2s ease;
+    }
+    .surprise-btn:hover { border-color: var(--accent); transform: translateY(-1px); }
+
+    .count-badge {
+        background: rgba(229,9,20,0.2);
+        color: var(--accent-2);
+        font-size: 0.75em;
+        font-weight: 700;
+        padding: 1px 7px;
+        border-radius: 999px;
+        margin-left: 4px;
+    }
+
+    .back-to-top {
+        position: fixed;
+        bottom: 24px;
+        right: 24px;
+        background: var(--accent);
+        color: white;
+        width: 46px;
+        height: 46px;
+        border-radius: 50%;
+        border: none;
+        cursor: pointer;
+        font-size: 1.2em;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 6px 18px rgba(0,0,0,0.35);
+        z-index: 60;
+        transition: transform 0.2s ease, opacity 0.2s ease;
+    }
+    .back-to-top.visible { display: flex; }
+    .back-to-top:hover { transform: translateY(-3px); }
+
+    .toast-container {
+        position: fixed;
+        bottom: 24px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 200;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        align-items: center;
+    }
+    .toast {
+        background: var(--card);
+        color: var(--text);
+        border: 1px solid var(--border);
+        padding: 10px 20px;
+        border-radius: 999px;
+        font-size: 0.88em;
+        font-weight: 500;
+        box-shadow: 0 8px 24px rgba(0,0,0,0.35);
+        animation: toastIn 0.25s ease, toastOut 0.25s ease 2.3s forwards;
+    }
+    @keyframes toastIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes toastOut { to { opacity: 0; transform: translateY(-8px); } }
+
+    .decade-select {
+        background: var(--card);
+        color: var(--text);
+        border: 1px solid var(--border);
+        padding: 9px 14px;
+        border-radius: 10px;
+        font-family: 'Inter', sans-serif;
+        font-size: 0.85em;
+        cursor: pointer;
+        outline: none;
+    }
+
+    .personal-rating {
+        display: flex;
+        gap: 3px;
+        margin: 4px 0 18px;
+    }
+    .personal-rating .star {
+        cursor: pointer;
+        font-size: 1.4em;
+        color: var(--border);
+        transition: transform 0.1s ease;
+        line-height: 1;
+    }
+    .personal-rating .star:hover { transform: scale(1.15); }
+    .personal-rating .star.filled { color: var(--gold); }
+
+    .card-star-badge {
+        position: absolute;
+        bottom: 8px;
+        left: 8px;
+        background: rgba(10,10,18,0.85);
+        backdrop-filter: blur(4px);
+        color: var(--gold);
+        font-size: 0.72em;
+        font-weight: 700;
+        padding: 3px 8px;
+        border-radius: 999px;
+    }
+
+    .share-btn {
+        background: var(--card);
+        border: 1px solid var(--border);
+        color: var(--text);
+        padding: 8px 16px;
+        border-radius: 999px;
+        cursor: pointer;
+        font-size: 0.85em;
+        font-weight: 600;
+        white-space: nowrap;
+    }
+
     @media (max-width: 640px) {
         .hero-title { font-size: 1.6em; }
         .hero { height: 52vh; min-height: 320px; }
@@ -422,6 +576,7 @@ let state = {
     activeGenre: null,
     activeCategory: "popular",
     sortBy: "popularity.desc",
+    decade: "",
     searchTerm: "",
     searchDebounce: null,
     movies: [],
@@ -430,17 +585,78 @@ let state = {
     totalPages: 1,
     isLoadingMore: false,
     favorites: new Set(JSON.parse(localStorage.getItem("cinehub_favorites") || "[]")),
+    watchlist: new Set(JSON.parse(localStorage.getItem("cinehub_watchlist") || "[]")),
+    ratings: JSON.parse(localStorage.getItem("cinehub_ratings") || "{}"),
 };
 
-function saveFavorites() {
-    localStorage.setItem("cinehub_favorites", JSON.stringify(Array.from(state.favorites)));
-}
+function saveFavorites() { localStorage.setItem("cinehub_favorites", JSON.stringify(Array.from(state.favorites))); }
+function saveWatchlist() { localStorage.setItem("cinehub_watchlist", JSON.stringify(Array.from(state.watchlist))); }
+function saveRatings() { localStorage.setItem("cinehub_ratings", JSON.stringify(state.ratings)); }
 
 function toggleFavorite(id) {
     id = Number(id);
-    if (state.favorites.has(id)) state.favorites.delete(id);
+    const wasFav = state.favorites.has(id);
+    if (wasFav) state.favorites.delete(id);
     else state.favorites.add(id);
     saveFavorites();
+    showToast(wasFav ? "Removido dos favoritos" : "❤️ Adicionado aos favoritos");
+    updateTabCounts();
+}
+
+function toggleWatchlist(id) {
+    id = Number(id);
+    const was = state.watchlist.has(id);
+    if (was) state.watchlist.delete(id);
+    else state.watchlist.add(id);
+    saveWatchlist();
+    showToast(was ? "Removido de 'Assistir depois'" : "📌 Adicionado a 'Assistir depois'");
+    updateTabCounts();
+}
+
+function setPersonalRating(id, stars) {
+    id = Number(id);
+    if (state.ratings[id] === stars) {
+        delete state.ratings[id]; // clicar na mesma nota remove a avaliação
+    } else {
+        state.ratings[id] = stars;
+    }
+    saveRatings();
+}
+
+function updateTabCounts() {
+    const favTab = document.querySelector('.category-chip[data-cat="favorites"] .count-badge');
+    if (favTab) favTab.textContent = state.favorites.size;
+    const wlTab = document.querySelector('.category-chip[data-cat="watchlist"] .count-badge');
+    if (wlTab) wlTab.textContent = state.watchlist.size;
+}
+
+/* ---------- TOASTS (avisos rápidos) ---------- */
+function showToast(message) {
+    let container = document.getElementById("toast-container");
+    if (!container) {
+        container = document.createElement("div");
+        container.id = "toast-container";
+        container.className = "toast-container";
+        document.body.appendChild(container);
+    }
+    const toast = document.createElement("div");
+    toast.className = "toast";
+    toast.textContent = message;
+    container.appendChild(toast);
+    setTimeout(() => toast.remove(), 2600);
+}
+
+/* ---------- TEMA CLARO/ESCURO ---------- */
+function applyTheme() {
+    const saved = localStorage.getItem("cinehub_theme") || "dark";
+    document.body.classList.toggle("light", saved === "light");
+}
+
+function toggleTheme() {
+    const isLight = document.body.classList.toggle("light");
+    localStorage.setItem("cinehub_theme", isLight ? "light" : "dark");
+    const btn = document.getElementById("theme-btn");
+    if (btn) btn.textContent = isLight ? "☀️" : "🌙";
 }
 
 const CATEGORIES = [
@@ -450,6 +666,7 @@ const CATEGORIES = [
     { id: "upcoming", label: "Em breve" },
     { id: "trending", label: "Tendências da semana" },
     { id: "favorites", label: "❤️ Favoritos" },
+    { id: "watchlist", label: "📌 Assistir depois" },
 ];
 
 const app = document.getElementById("app");
@@ -499,22 +716,28 @@ async function loadGenres() {
 
 async function loadMovies(page = 1, append = false) {
     let data;
-    if (state.activeCategory === "favorites") {
-        const ids = Array.from(state.favorites);
+    if (state.activeCategory === "favorites" || state.activeCategory === "watchlist") {
+        const ids = Array.from(state.activeCategory === "favorites" ? state.favorites : state.watchlist);
         const results = await Promise.all(ids.map(id => tmdbFetch(`/movie/${id}`).catch(() => null)));
         state.movies = results.filter(Boolean).filter(m => m.poster_path);
         state.page = 1;
         state.totalPages = 1;
         return;
     }
+    const decadeParams = {};
+    if (state.decade) {
+        decadeParams["primary_release_date.gte"] = `${state.decade}-01-01`;
+        decadeParams["primary_release_date.lte"] = `${Number(state.decade) + 9}-12-31`;
+    }
     if (state.searchTerm) {
         data = await tmdbFetch("/search/movie", { query: state.searchTerm, page });
-    } else if (state.activeGenre) {
+    } else if (state.activeGenre || state.decade) {
         data = await tmdbFetch("/discover/movie", {
-            with_genres: state.activeGenre,
+            ...(state.activeGenre ? { with_genres: state.activeGenre } : {}),
             sort_by: state.sortBy,
             "vote_count.gte": 50,
             page,
+            ...decadeParams,
         });
     } else if (state.activeCategory === "trending") {
         data = await tmdbFetch("/trending/movie/week", { page });
@@ -539,8 +762,10 @@ function renderShell() {
             <div class="logo">🎬 CineHub</div>
             <div class="search-bar">
                 <span class="search-icon">🔍</span>
-                <input type="text" id="search-input" placeholder="Buscar filmes...">
+                <input type="text" id="search-input" placeholder="Buscar filmes... (atalho: /)">
             </div>
+            <button class="surprise-btn" id="surprise-btn">🎲 Filme surpresa</button>
+            <button class="theme-btn" id="theme-btn" title="Alternar tema"></button>
         </header>
 
         <div id="hero-container"></div>
@@ -551,6 +776,15 @@ function renderShell() {
         <div class="controls category-row" id="category-row"></div>
         <div class="controls">
             <div class="chip-group" id="genre-chips"></div>
+            <select class="decade-select" id="decade-select">
+                <option value="">Qualquer década</option>
+                <option value="2020">2020s</option>
+                <option value="2010">2010s</option>
+                <option value="2000">2000s</option>
+                <option value="1990">1990s</option>
+                <option value="1980">1980s</option>
+                <option value="1970">1970s</option>
+            </select>
             <select id="sort">
                 <option value="popularity.desc">Mais populares</option>
                 <option value="vote_average.desc">Melhor avaliados</option>
@@ -567,8 +801,32 @@ function renderShell() {
             <div class="modal" id="modal"></div>
         </div>
 
+        <button class="back-to-top" id="back-to-top" title="Voltar ao topo">↑</button>
+
         <footer>Dados fornecidos por <a href="https://www.themoviedb.org/" target="_blank">TMDB</a> · Feito com JavaScript puro</footer>
     `;
+
+    document.getElementById("theme-btn").textContent =
+        document.body.classList.contains("light") ? "☀️" : "🌙";
+    document.getElementById("theme-btn").addEventListener("click", toggleTheme);
+
+    document.getElementById("surprise-btn").addEventListener("click", async () => {
+        try {
+            const randomPage = Math.floor(Math.random() * 20) + 1;
+            const data = await tmdbFetch("/discover/movie", {
+                sort_by: "popularity.desc",
+                "vote_count.gte": 200,
+                page: randomPage,
+            });
+            const pool = (data.results || []).filter(m => m.poster_path);
+            if (pool.length) {
+                const pick = pool[Math.floor(Math.random() * pool.length)];
+                openModal(pick.id);
+            }
+        } catch (err) {
+            showToast("Não foi possível sortear um filme agora");
+        }
+    });
 
     document.getElementById("search-input").addEventListener("input", (e) => {
         clearTimeout(state.searchDebounce);
@@ -585,28 +843,51 @@ function renderShell() {
         refreshMovies();
     });
 
+    document.getElementById("decade-select").addEventListener("change", (e) => {
+        state.decade = e.target.value;
+        refreshMovies();
+    });
+
     document.getElementById("modal-overlay").addEventListener("click", (e) => {
         if (e.target.id === "modal-overlay") closeModal();
     });
 
+    document.getElementById("back-to-top").addEventListener("click", () => {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+
+    window.addEventListener("scroll", () => {
+        document.getElementById("back-to-top")?.classList.toggle("visible", window.scrollY > 600);
+    });
+
     document.addEventListener("keydown", (e) => {
         if (e.key === "Escape") closeModal();
+        if (e.key === "/" && document.activeElement.id !== "search-input") {
+            e.preventDefault();
+            document.getElementById("search-input").focus();
+        }
     });
 }
 
 function renderCategoryRow() {
     const container = document.getElementById("category-row");
-    container.innerHTML = CATEGORIES.map(c =>
-        `<button class="category-chip ${state.activeCategory === c.id ? "active" : ""}" data-cat="${c.id}">${c.label}</button>`
-    ).join("");
+    container.innerHTML = CATEGORIES.map(c => {
+        let badge = "";
+        if (c.id === "favorites") badge = `<span class="count-badge">${state.favorites.size}</span>`;
+        if (c.id === "watchlist") badge = `<span class="count-badge">${state.watchlist.size}</span>`;
+        return `<button class="category-chip ${state.activeCategory === c.id ? "active" : ""}" data-cat="${c.id}">${c.label}${badge}</button>`;
+    }).join("");
     container.querySelectorAll(".category-chip").forEach(btn => {
         btn.addEventListener("click", () => {
             state.activeCategory = btn.dataset.cat;
             state.activeGenre = null;
+            state.decade = "";
             state.searchTerm = "";
             document.getElementById("search-input").value = "";
+            const decadeSelect = document.getElementById("decade-select");
+            if (decadeSelect) decadeSelect.value = "";
             document.getElementById("section-title").textContent =
-                CATEGORIES.find(c => c.id === state.activeCategory).label;
+                CATEGORIES.find(c => c.id === state.activeCategory).label.replace(/^\W+\s/, "");
             container.querySelectorAll(".category-chip").forEach(b => b.classList.remove("active"));
             btn.classList.add("active");
             document.querySelectorAll("#genre-chips .chip").forEach(c => c.classList.remove("active"));
@@ -629,7 +910,7 @@ function setupInfiniteScroll() {
 }
 
 async function loadMoreMovies() {
-    if (state.activeCategory === "favorites") return;
+    if (state.activeCategory === "favorites" || state.activeCategory === "watchlist") return;
     if (state.isLoadingMore || state.page >= state.totalPages) return;
     state.isLoadingMore = true;
     document.getElementById("loading-more").style.display = "block";
@@ -700,12 +981,14 @@ function renderSkeletons() {
 function movieCardHtml(m, idx) {
     const year = (m.release_date || "").slice(0, 4) || "—";
     const isFav = state.favorites.has(Number(m.id));
+    const myRating = state.ratings[m.id];
     return `
     <div class="movie-card" data-id="${m.id}" style="animation-delay:${(idx % 20) * 0.03}s">
         <div class="poster-wrap">
             <img src="${IMG_BASE}w500${m.poster_path}" alt="${m.title}" loading="lazy">
             <span class="rating-pill">⭐ ${m.vote_average.toFixed(1)}</span>
             <button class="fav-btn ${isFav ? "active" : ""}" data-fav-id="${m.id}" title="Favoritar">${isFav ? "❤️" : "🤍"}</button>
+            ${myRating ? `<span class="card-star-badge">Sua nota: ${myRating}★</span>` : ""}
         </div>
         <div class="movie-info">
             <div class="movie-title">${m.title}</div>
@@ -782,6 +1065,8 @@ async function openModal(id) {
         const hours = Math.floor((m.runtime || 0) / 60);
         const mins = (m.runtime || 0) % 60;
         const isFav = state.favorites.has(Number(m.id));
+        const isWatchlist = state.watchlist.has(Number(m.id));
+        const myRating = state.ratings[m.id] || 0;
 
         const trailer = (m.videos?.results || []).find(v => v.type === "Trailer" && v.site === "YouTube");
         const cast = (m.credits?.cast || []).slice(0, 8);
@@ -793,13 +1078,23 @@ async function openModal(id) {
             <div class="modal-body">
                 <div class="modal-title-row">
                     <div class="modal-title">${m.title}</div>
-                    <button class="modal-fav-btn ${isFav ? "active" : ""}" id="modal-fav-btn">${isFav ? "❤️ Favoritado" : "🤍 Favoritar"}</button>
+                    <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                        <button class="modal-fav-btn ${isFav ? "active" : ""}" id="modal-fav-btn">${isFav ? "❤️ Favoritado" : "🤍 Favoritar"}</button>
+                        <button class="modal-fav-btn ${isWatchlist ? "active" : ""}" id="modal-watchlist-btn">${isWatchlist ? "📌 Na lista" : "➕ Assistir depois"}</button>
+                        <button class="share-btn" id="modal-share-btn">🔗 Compartilhar</button>
+                    </div>
                 </div>
                 <div class="modal-meta">
                     <span class="modal-rating">⭐ ${m.vote_average.toFixed(1)}</span>
                     <span>${year}</span>
                     ${m.runtime ? `<span>${hours}h ${mins}min</span>` : ""}
                     ${(m.genres || []).map(g => `<span class="genre-tag">${g.name}</span>`).join("")}
+                </div>
+                <div>
+                    <div style="font-size:0.85em; color:var(--muted); margin-bottom:4px;">Sua avaliação</div>
+                    <div class="personal-rating" id="personal-rating">
+                        ${[1,2,3,4,5].map(n => `<span class="star ${n <= myRating ? "filled" : ""}" data-star="${n}">★</span>`).join("")}
+                    </div>
                 </div>
                 <p class="modal-overview">${m.overview || "Sinopse não disponível."}</p>
                 ${trailer ? `
@@ -845,6 +1140,32 @@ async function openModal(id) {
                 gridBtn.textContent = nowFav ? "❤️" : "🤍";
                 gridBtn.classList.toggle("active", nowFav);
             }
+        });
+        document.getElementById("modal-watchlist-btn").addEventListener("click", (e) => {
+            toggleWatchlist(m.id);
+            const now = state.watchlist.has(Number(m.id));
+            e.target.textContent = now ? "📌 Na lista" : "➕ Assistir depois";
+            e.target.classList.toggle("active", now);
+        });
+        document.getElementById("modal-share-btn").addEventListener("click", async () => {
+            const text = `${m.title} (${year}) — ⭐ ${m.vote_average.toFixed(1)}\n${m.overview || ""}`.slice(0, 300);
+            try {
+                if (navigator.share) {
+                    await navigator.share({ title: m.title, text });
+                } else {
+                    await navigator.clipboard.writeText(text);
+                    showToast("Copiado para a área de transferência");
+                }
+            } catch (err) { /* usuário cancelou o compartilhamento, ignora */ }
+        });
+        document.querySelectorAll("#personal-rating .star").forEach(star => {
+            star.addEventListener("click", () => {
+                setPersonalRating(m.id, Number(star.dataset.star));
+                const current = state.ratings[m.id] || 0;
+                document.querySelectorAll("#personal-rating .star").forEach(s => {
+                    s.classList.toggle("filled", Number(s.dataset.star) <= current);
+                });
+            });
         });
         modal.querySelectorAll(".similar-card").forEach(card => {
             card.addEventListener("click", () => openModal(card.dataset.similarId));
