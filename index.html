@@ -399,8 +399,6 @@
         font-size: 0.95em;
     }
     .config-box a { color: var(--accent-2); }
-
-    /* ---------- NOVOS RECURSOS ---------- */
     .theme-btn {
         background: var(--card);
         border: 1px solid var(--border);
@@ -562,10 +560,6 @@
 <div id="app"></div>
 
 <script>
-/* =========================================================
-   CineHub — site de filmes usando a API TMDB (themoviedb.org)
-   Tudo client-side: HTML gerado via JS, sem backend.
-   ========================================================= */
 
 const TMDB_KEY_STORAGE = "cinehub_tmdb_key";
 const IMG_BASE = "https://image.tmdb.org/t/p/";
@@ -616,7 +610,7 @@ function toggleWatchlist(id) {
 function setPersonalRating(id, stars) {
     id = Number(id);
     if (state.ratings[id] === stars) {
-        delete state.ratings[id]; // clicar na mesma nota remove a avaliação
+        delete state.ratings[id];
     } else {
         state.ratings[id] = stars;
     }
@@ -630,7 +624,6 @@ function updateTabCounts() {
     if (wlTab) wlTab.textContent = state.watchlist.size;
 }
 
-/* ---------- TOASTS (avisos rápidos) ---------- */
 function showToast(message) {
     let container = document.getElementById("toast-container");
     if (!container) {
@@ -646,7 +639,6 @@ function showToast(message) {
     setTimeout(() => toast.remove(), 2600);
 }
 
-/* ---------- TEMA CLARO/ESCURO ---------- */
 function applyTheme() {
     const saved = localStorage.getItem("cinehub_theme") || "dark";
     document.body.classList.toggle("light", saved === "light");
@@ -678,7 +670,7 @@ function renderConfigScreen(errorMsg) {
                 <h1>🎬 CineHub</h1>
                 <p>Para exibir os filmes, este site usa a API gratuita do
                 <a href="https://www.themoviedb.org/" target="_blank">TMDB</a>.
-                Crie uma conta gratuita, gere uma "API Key (v3 auth)" em
+                Crie uma conta gratuita, gere uma "API Key" em
                 Configurações → API, e cole ela abaixo.</p>
                 ${errorMsg ? `<p style="color:#ff6b6b">${errorMsg}</p>` : ""}
                 <input type="text" id="api-key-input" placeholder="Cole sua TMDB API Key aqui">
@@ -1156,7 +1148,7 @@ async function openModal(id) {
                     await navigator.clipboard.writeText(text);
                     showToast("Copiado para a área de transferência");
                 }
-            } catch (err) { /* usuário cancelou o compartilhamento, ignora */ }
+            } catch (err) 
         });
         document.querySelectorAll("#personal-rating .star").forEach(star => {
             star.addEventListener("click", () => {
