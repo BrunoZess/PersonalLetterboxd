@@ -227,6 +227,25 @@
         align-items: center;
         gap: 3px;
     }
+    .fav-btn {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        background: rgba(10,10,18,0.85);
+        backdrop-filter: blur(4px);
+        border: none;
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        cursor: pointer;
+        font-size: 0.95em;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: transform 0.15s ease;
+    }
+    .fav-btn:hover { transform: scale(1.15); }
+    .fav-btn.active { background: rgba(229,9,20,0.25); }
     .movie-info { padding: 12px 14px 14px; }
     .movie-title {
         font-family: 'Poppins', sans-serif;
@@ -295,7 +314,32 @@
     .modal-close:hover { background: var(--accent); }
     .modal-backdrop { width: 100%; aspect-ratio: 16/8; object-fit: cover; display: block; }
     .modal-body { padding: 26px 30px 34px; }
-    .modal-title { font-family: 'Poppins', sans-serif; font-size: 1.7em; font-weight: 700; margin-bottom: 10px; }
+    .modal-title-row { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; flex-wrap: wrap; margin-bottom: 10px; }
+    .modal-fav-btn {
+        background: var(--card); border: 1px solid var(--border); color: var(--text);
+        padding: 8px 16px; border-radius: 999px; cursor: pointer; font-size: 0.85em;
+        font-weight: 600; white-space: nowrap; transition: all 0.2s ease;
+    }
+    .modal-fav-btn.active { background: rgba(229,9,20,0.2); border-color: var(--accent); }
+    .modal-title { font-family: 'Poppins', sans-serif; font-size: 1.7em; font-weight: 700; }
+    .trailer-wrap { position: relative; width: 100%; aspect-ratio: 16/9; margin: 8px 0 22px; border-radius: 12px; overflow: hidden; }
+    .trailer-wrap iframe { width: 100%; height: 100%; border: none; }
+    .modal-section-title { font-family: 'Poppins', sans-serif; font-size: 1.1em; font-weight: 600; margin: 22px 0 12px; }
+    .cast-row, .similar-row { display: flex; gap: 14px; overflow-x: auto; padding-bottom: 8px; scrollbar-width: thin; }
+    .cast-card { flex: 0 0 90px; text-align: center; }
+    .cast-card img {
+        width: 90px; height: 90px; object-fit: cover; border-radius: 50%;
+        border: 2px solid var(--border); margin-bottom: 8px;
+    }
+    .cast-name { font-size: 0.8em; font-weight: 600; line-height: 1.3; }
+    .cast-role { font-size: 0.75em; color: var(--muted); }
+    .similar-card { flex: 0 0 120px; cursor: pointer; transition: transform 0.15s ease; }
+    .similar-card:hover { transform: translateY(-4px); }
+    .similar-card img { width: 120px; height: 180px; object-fit: cover; border-radius: 10px; margin-bottom: 6px; }
+    .similar-title {
+        font-size: 0.8em; font-weight: 500; line-height: 1.3;
+        display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+    }
     .modal-meta { display: flex; gap: 14px; flex-wrap: wrap; color: var(--muted); font-size: 0.9em; margin-bottom: 18px; align-items: center; }
     .modal-meta .modal-rating { color: var(--gold); font-weight: 700; }
     .genre-tag { background: var(--card); border: 1px solid var(--border); padding: 4px 12px; border-radius: 999px; font-size: 0.85em; color: var(--text); }
@@ -385,7 +429,19 @@ let state = {
     page: 1,
     totalPages: 1,
     isLoadingMore: false,
+    favorites: new Set(JSON.parse(localStorage.getItem("cinehub_favorites") || "[]")),
 };
+
+function saveFavorites() {
+    localStorage.setItem("cinehub_favorites", JSON.stringify(Array.from(state.favorites)));
+}
+
+function toggleFavorite(id) {
+    id = Number(id);
+    if (state.favorites.has(id)) state.favorites.delete(id);
+    else state.favorites.add(id);
+    saveFavorites();
+}
 
 const CATEGORIES = [
     { id: "popular", label: "Populares" },
@@ -393,6 +449,7 @@ const CATEGORIES = [
     { id: "now_playing", label: "Em cartaz" },
     { id: "upcoming", label: "Em breve" },
     { id: "trending", label: "Tendências da semana" },
+    { id: "favorites", label: "❤️ Favoritos" },
 ];
 
 const app = document.getElementById("app");
@@ -442,6 +499,14 @@ async function loadGenres() {
 
 async function loadMovies(page = 1, append = false) {
     let data;
+    if (state.activeCategory === "favorites") {
+        const ids = Array.from(state.favorites);
+        const results = await Promise.all(ids.map(id => tmdbFetch(`/movie/${id}`).catch(() => null)));
+        state.movies = results.filter(Boolean).filter(m => m.poster_path);
+        state.page = 1;
+        state.totalPages = 1;
+        return;
+    }
     if (state.searchTerm) {
         data = await tmdbFetch("/search/movie", { query: state.searchTerm, page });
     } else if (state.activeGenre) {
@@ -564,6 +629,7 @@ function setupInfiniteScroll() {
 }
 
 async function loadMoreMovies() {
+    if (state.activeCategory === "favorites") return;
     if (state.isLoadingMore || state.page >= state.totalPages) return;
     state.isLoadingMore = true;
     document.getElementById("loading-more").style.display = "block";
@@ -633,11 +699,13 @@ function renderSkeletons() {
 
 function movieCardHtml(m, idx) {
     const year = (m.release_date || "").slice(0, 4) || "—";
+    const isFav = state.favorites.has(Number(m.id));
     return `
     <div class="movie-card" data-id="${m.id}" style="animation-delay:${(idx % 20) * 0.03}s">
         <div class="poster-wrap">
             <img src="${IMG_BASE}w500${m.poster_path}" alt="${m.title}" loading="lazy">
             <span class="rating-pill">⭐ ${m.vote_average.toFixed(1)}</span>
+            <button class="fav-btn ${isFav ? "active" : ""}" data-fav-id="${m.id}" title="Favoritar">${isFav ? "❤️" : "🤍"}</button>
         </div>
         <div class="movie-info">
             <div class="movie-title">${m.title}</div>
@@ -671,7 +739,25 @@ function attachCardListeners(grid) {
     grid.querySelectorAll(".movie-card").forEach(card => {
         if (card.dataset.bound) return;
         card.dataset.bound = "1";
-        card.addEventListener("click", () => openModal(card.dataset.id));
+        card.addEventListener("click", (e) => {
+            if (e.target.closest(".fav-btn")) return;
+            openModal(card.dataset.id);
+        });
+    });
+    grid.querySelectorAll(".fav-btn").forEach(btn => {
+        if (btn.dataset.bound) return;
+        btn.dataset.bound = "1";
+        btn.addEventListener("click", (e) => {
+            e.stopPropagation();
+            const id = btn.dataset.favId;
+            toggleFavorite(id);
+            const nowFav = state.favorites.has(Number(id));
+            btn.textContent = nowFav ? "❤️" : "🤍";
+            btn.classList.toggle("active", nowFav);
+            if (state.activeCategory === "favorites" && !nowFav) {
+                btn.closest(".movie-card").remove();
+            }
+        });
     });
 }
 
@@ -691,15 +777,24 @@ async function openModal(id) {
     modal.innerHTML = `<div style="padding:60px;text-align:center;color:var(--muted)">Carregando...</div>`;
 
     try {
-        const m = await tmdbFetch(`/movie/${id}`);
+        const m = await tmdbFetch(`/movie/${id}`, { append_to_response: "videos,credits,similar" });
         const year = (m.release_date || "").slice(0, 4) || "—";
         const hours = Math.floor((m.runtime || 0) / 60);
         const mins = (m.runtime || 0) % 60;
+        const isFav = state.favorites.has(Number(m.id));
+
+        const trailer = (m.videos?.results || []).find(v => v.type === "Trailer" && v.site === "YouTube");
+        const cast = (m.credits?.cast || []).slice(0, 8);
+        const similar = (m.similar?.results || []).filter(s => s.poster_path).slice(0, 10);
+
         modal.innerHTML = `
             <button class="modal-close" id="modal-close-btn">✕</button>
             ${m.backdrop_path ? `<img class="modal-backdrop" src="${IMG_BASE}w780${m.backdrop_path}" alt="${m.title}">` : ""}
             <div class="modal-body">
-                <div class="modal-title">${m.title}</div>
+                <div class="modal-title-row">
+                    <div class="modal-title">${m.title}</div>
+                    <button class="modal-fav-btn ${isFav ? "active" : ""}" id="modal-fav-btn">${isFav ? "❤️ Favoritado" : "🤍 Favoritar"}</button>
+                </div>
                 <div class="modal-meta">
                     <span class="modal-rating">⭐ ${m.vote_average.toFixed(1)}</span>
                     <span>${year}</span>
@@ -707,14 +802,53 @@ async function openModal(id) {
                     ${(m.genres || []).map(g => `<span class="genre-tag">${g.name}</span>`).join("")}
                 </div>
                 <p class="modal-overview">${m.overview || "Sinopse não disponível."}</p>
+                ${trailer ? `
+                <div class="trailer-wrap">
+                    <iframe src="https://www.youtube.com/embed/${trailer.key}" title="Trailer" allowfullscreen loading="lazy"></iframe>
+                </div>` : ""}
+                ${cast.length ? `
+                <h3 class="modal-section-title">Elenco</h3>
+                <div class="cast-row">
+                    ${cast.map(a => `
+                        <div class="cast-card">
+                            <img src="${a.profile_path ? IMG_BASE + "w185" + a.profile_path : "https://placehold.co/100x100/1a1a28/9494a8?text=?"}" alt="${a.name}">
+                            <div class="cast-name">${a.name}</div>
+                            <div class="cast-role">${a.character || ""}</div>
+                        </div>
+                    `).join("")}
+                </div>` : ""}
                 <div class="modal-extra">
                     <div><strong>Orçamento</strong>${m.budget ? "US$ " + m.budget.toLocaleString("pt-BR") : "—"}</div>
                     <div><strong>Bilheteria</strong>${m.revenue ? "US$ " + m.revenue.toLocaleString("pt-BR") : "—"}</div>
                     <div><strong>Status</strong>${m.status || "—"}</div>
                 </div>
+                ${similar.length ? `
+                <h3 class="modal-section-title">Filmes parecidos</h3>
+                <div class="similar-row">
+                    ${similar.map(s => `
+                        <div class="similar-card" data-similar-id="${s.id}">
+                            <img src="${IMG_BASE}w200${s.poster_path}" alt="${s.title}">
+                            <div class="similar-title">${s.title}</div>
+                        </div>
+                    `).join("")}
+                </div>` : ""}
             </div>
         `;
         document.getElementById("modal-close-btn").addEventListener("click", closeModal);
+        document.getElementById("modal-fav-btn").addEventListener("click", (e) => {
+            toggleFavorite(m.id);
+            const nowFav = state.favorites.has(Number(m.id));
+            e.target.textContent = nowFav ? "❤️ Favoritado" : "🤍 Favoritar";
+            e.target.classList.toggle("active", nowFav);
+            const gridBtn = document.querySelector(`.fav-btn[data-fav-id="${m.id}"]`);
+            if (gridBtn) {
+                gridBtn.textContent = nowFav ? "❤️" : "🤍";
+                gridBtn.classList.toggle("active", nowFav);
+            }
+        });
+        modal.querySelectorAll(".similar-card").forEach(card => {
+            card.addEventListener("click", () => openModal(card.dataset.similarId));
+        });
     } catch (err) {
         modal.innerHTML = `
             <button class="modal-close" id="modal-close-btn">✕</button>
